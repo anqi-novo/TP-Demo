@@ -1,68 +1,106 @@
 from flask import Flask, request, jsonify, send_file
 from docxtpl import DocxTemplate
-import os 
+import os
 from docx2pdf import convert
-import tempfile
-
+import pythoncom
 
 app = Flask(__name__)
 
-@app.route('/hello')
+
+@app.route("/hello")
 def hello():
-    return 'Hello, World!'
+    return "Hello, World!"
 
-@app.route('/process_document', methods=['POST'])
+
+@app.route("/process_document", methods=["POST"])
 def process_document():
-    if 'file' not in request.files:
-        return 'No file uploaded', 400
+    if "file" not in request.files:
+        return "No file uploaded", 400
 
-    file = request.files['file']
-    if file.filename == '':
-        return 'No file uploaded', 400
+    file = request.files["file"]
+    if file.filename == "":
+        return "No file uploaded", 400
 
-    if file.mimetype != 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        return 'Invalid file format', 400
-    
+    if (
+        file.mimetype
+        != "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ):
+        return "Invalid file format", 400
+
+    # this is needed otherwise the upload might fail
+    pythoncom.CoInitialize()
+
+    # Save the uploaded DOCX file to a temporary file
+    temp_docx_file = "preview.docx"
+    file.save(temp_docx_file)
+
+    # Convert the temporary DOCX file to PDF
+    temp_pdf_file = "preview.pdf"
+    if os.path.exists(temp_pdf_file):
+        os.remove(temp_pdf_file)  # remove existing file
+    convert(temp_docx_file)
+
+    # Remove the temporary DOCX file
+    os.remove(temp_docx_file)
+
     try:
         doc = DocxTemplate(file)
         set_of_variables = doc.get_undeclared_template_variables()
         return jsonify(variables=list(set_of_variables))
-      
+
     except Exception as e:
         return str(e), 500
-    
 
-@app.route('/generate_template', methods=['POST'])
+
+@app.route("/generate_template", methods=["POST"])
 def generate_template():
     form_data = request.form.to_dict()
     print(form_data)
-    file = request.files['file']
-    
-     #Save the file to disk temporarily
-    file.save('temp_file.docx')
+    file = request.files["file"]
 
-    with open('temp_file.docx', 'rb') as f:
-        first = f.readline().decode('ANSI')
+    # Save the file to disk temporarily
+    file.save("temp_file.docx")
+
+    with open("temp_file.docx", "rb") as f:
+        first = f.readline().decode("ANSI")
         print("First line of the template:", first)
 
-    doc = DocxTemplate('temp_file.docx')
+    doc = DocxTemplate("temp_file.docx")
 
     context = {}
     for field in form_data:
-         if field != "file":
+        if field != "file":
             context[field] = form_data[field]
 
-
     doc.render(context)
-    doc.save('generated_template.docx')
+    doc.save("generated_template.docx")
 
-    os.remove('temp_file.docx')
+    os.remove("temp_file.docx")
 
-    with open('generated_template.docx', 'rb') as f:
-        first_line = f.readline().decode('ANSI')
+    with open("generated_template.docx", "rb") as f:
+        first_line = f.readline().decode("ANSI")
         print("First line of the generated template:", first_line)
 
-    return send_file('generated_template.docx', as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document charset=windows-1252')
-                     
-if __name__ == '__main__':
+    return send_file(
+        "generated_template.docx",
+        as_attachment=True,
+        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document charset=windows-1252",
+    )
+
+
+@app.route("/get_preview")
+def get_preview():
+    print("get_preview")
+    try:
+        # Open the PDF file in binary mode and return it to the frontend
+        return send_file(
+            "preview.pdf",
+            mimetype="application/pdf",
+            as_attachment=True,
+        )
+    except Exception as e:
+        return str(e), 500
+
+
+if __name__ == "__main__":
     app.run()

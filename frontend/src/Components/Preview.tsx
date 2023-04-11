@@ -1,18 +1,37 @@
 import { useEffect, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import axios from "axios";
 
-export const Preview = (props: { file: File }) => {
+export const Preview = () => {
+  const [previewFile, setPreviewFile] = useState<File | undefined>();
 
-  //for this to work the file can not be local because it uses the office viewer that only works with public urls.
+  useEffect(() => {
+    const fetchPreview = async () => {
+      try {
+        const response = await axios.get("/get_preview", { responseType: 'blob' });
+        console.log(response.data)
+        const blob = new Blob([response.data], { type: "application/pdf;" });
+        const file = new File([blob], "temp_file.pdf", { type: "application/pdf" });
+        console.log(file.stream)
+        setPreviewFile(file);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPreview();
+  }, []);
+
   return (
-    <DocViewer
-      documents={[
-        {
-          uri: window.URL.createObjectURL(props.file),
-          fileName: props.file.name,
-        },
-      ]}
-      pluginRenderers={DocViewerRenderers}
-    />
+    <div>
+      <DocViewer
+        documents={[
+          {
+            uri: previewFile ? window.URL.createObjectURL(previewFile) : "",
+            fileName: "Template Preview",
+          },
+        ]}
+        pluginRenderers={DocViewerRenderers}
+      />
+    </div>
   );
 };

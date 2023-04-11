@@ -19,12 +19,12 @@ function App() {
 
   return (
     <div>
-     <NavBar/>
-     <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
-      {file && <Preview file={file}/>}
-     <FileUpload onTemplateVariables={handleTemplateVariables} />
-     {file && templateVariables && templateVariables.length > 0 && <DynamicForm fields={templateVariables} file={file}/>}
-     </Container>
+      <NavBar />
+      <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
+        {file && <Preview />}
+        {!file && <FileUpload onTemplateVariables={handleTemplateVariables} />}
+        {file && templateVariables && templateVariables.length > 0 && <DynamicForm fields={templateVariables} file={file} />}
+      </Container>
     </div>
   );
 }

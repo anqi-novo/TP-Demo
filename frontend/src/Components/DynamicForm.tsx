@@ -75,7 +75,7 @@ const DynamicForm = ({ fields, file }: Props) => {
           Generate
         </Button>
       </Grid>
-     
+
     </Box>
   );
 };
