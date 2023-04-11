@@ -52,13 +52,14 @@ const DynamicForm = ({ fields, file }: Props) => {
     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
       <Grid container spacing={2} justifyContent="center" alignItems="center">
         <Grid item xs={12}>
-          <Typography component="h1" variant="h6">
+          <Typography component="h1" variant="overline">
             Identified variables
           </Typography>
         </Grid>
         {fields.map((field, i) => (
           <Grid item xs={12} sm={6} key={i}>
             <TextField
+              size='small'
               label={field}
               fullWidth
               required
