@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextField, Button, Grid, Box, Typography } from '@mui/material';
+import { TextField, Button, Grid, Box, Typography, Select, MenuItem, SelectChangeEvent, InputLabel, FormControl } from '@mui/material';
 import axios from 'axios';
 
 type Props = {
@@ -18,9 +18,23 @@ const DynamicForm = ({ fields, file }: Props) => {
     }));
   };
 
+  const handleSelectChange = (e: SelectChangeEvent<any>, field: string) => {
+    const { value } = e.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      [`${field}-type`]: value as string,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    // const form = e.target as HTMLFormElement;
+    // console.log(form)
+    // if (!form.checkValidity()) {
+    //   console.log("hello")
+    //   // form is invalid, do not submit
+    //   return;
+    // }
     const formData = new FormData();
     formData.append('file', file);
     Object.entries(formState).forEach(([key, value]) => {
@@ -49,7 +63,7 @@ const DynamicForm = ({ fields, file }: Props) => {
   };
 
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ m: 3 }}>
       <Grid container spacing={2} justifyContent="center" alignItems="center">
         <Grid item xs={12}>
           <Typography component="h1" variant="overline">
@@ -57,18 +71,44 @@ const DynamicForm = ({ fields, file }: Props) => {
           </Typography>
         </Grid>
         {fields.map((field, i) => (
-          <Grid item xs={12} sm={6} key={i}>
-            <TextField
-              size='small'
-              label={field}
-              fullWidth
-              required
-              name={field}
-              value={formState[field] || ''}
-              onChange={handleInputChange}
-              autoFocus
-            />
+          <Grid item container xs={12} sm={12} spacing={1} key={i}>
+            <Grid item xs={8} sm={4}>
+              <Typography sx={{ mt: 1 }} variant="overline">
+                {field}
+              </Typography>
+            </Grid>
+            <Grid item xs={6} sm={3}>
+              <FormControl sx={{ minWidth: 120, width: '100%' }} size="small" required>
+                <InputLabel id={`${field}-label`}>Type</InputLabel>
+                <Select
+                  label="Choose a type..."
+                  labelId={`${field}-label`}
+                  id={field}
+                  value={formState[`${field}-type`] || ''}
+                  onChange={(e) => handleSelectChange(e, field)}
+                  fullWidth
+                >
+                  <MenuItem value="Text">Text</MenuItem>
+                  <MenuItem value="Number">Number</MenuItem>
+                  <MenuItem value="Date">Date</MenuItem>
+                </Select>
+              </FormControl>
+
+            </Grid>
+            <Grid item xs={6} sm={5}>
+              <TextField
+                size="small"
+                fullWidth
+                required
+                label={field}
+                name={field}
+                value={formState[field] || ''}
+                onChange={handleInputChange}
+                autoFocus
+              />
+            </Grid>
           </Grid>
+
         ))}
       </Grid>
       <Grid item xs={12}>
@@ -76,7 +116,6 @@ const DynamicForm = ({ fields, file }: Props) => {
           Generate
         </Button>
       </Grid>
-
     </Box>
   );
 };

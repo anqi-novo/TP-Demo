@@ -19,10 +19,10 @@ function App() {
   return (
     <div>
       <NavBar />
-      <Container disableGutters maxWidth="md" component="main" sx={{ pt: 8, pb: 6 }}>
+      <Container disableGutters component="main" sx={{ pt: 8, pb: 6 }}>
         {file ? <Grid container spacing={2} alignItems="stretch" justifyContent="center">
           <Grid item xs={12} md={6}>
-            <Box mb={{ xs: 2, md: 0 }} maxWidth={400} alignItems="center">
+            <Box mb={{ xs: 2, md: 0 }} alignItems="center">
               {file && templateVariables && templateVariables.length > 0 && <DynamicForm fields={templateVariables} file={file} />}
             </Box>
           </Grid>
