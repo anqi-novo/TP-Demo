@@ -113,7 +113,7 @@ const DynamicForm = ({ fields, file, onCancel }: Props) => {
 
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ m: 3 }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ m: 2 }}>
       {error && (
         <ErrorToast open={open} handleClose={handleClose} error={error} />
       )}
@@ -125,13 +125,13 @@ const DynamicForm = ({ fields, file, onCancel }: Props) => {
         </Grid>
         {fields.map((field, i) => (
           <Grid item container xs={12} sm={12} spacing={1} key={i}>
-            <Grid item xs={8} sm={4}>
+            <Grid item xs={8} sm={5}>
               <Typography sx={{ mt: 1 }} variant="overline">
                 {field}
               </Typography>
             </Grid>
             <Grid item xs={6} sm={3}>
-              <FormControl sx={{ minWidth: 120, width: '100%' }} size="small" required>
+              <FormControl sx={{ minWidth: 90, width: '100%' }} size="small" required>
                 <InputLabel id={`${field}-label`}>Type</InputLabel>
                 <Select
                   label="Choose a type..."
@@ -148,7 +148,7 @@ const DynamicForm = ({ fields, file, onCancel }: Props) => {
               </FormControl>
 
             </Grid>
-            <Grid item xs={6} sm={5}>
+            <Grid item xs={6} sm={4}>
               {getFieldComponent(field, formState, handleInputChange)}
             </Grid>
           </Grid>

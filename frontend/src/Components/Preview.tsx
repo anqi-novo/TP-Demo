@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import axios from "axios";
+import { Box } from "@mui/material";
 
 export const Preview = () => {
   const [previewFile, setPreviewFile] = useState<File | undefined>();
@@ -21,16 +22,23 @@ export const Preview = () => {
   }, []);
 
   return (
-    <div>
-      <DocViewer
-        documents={[
-          {
-            uri: previewFile ? window.URL.createObjectURL(previewFile) : "",
-            fileName: "Template Preview",
-          },
-        ]}
-        pluginRenderers={DocViewerRenderers}
-      />
-    </div>
+    <DocViewer
+      theme={{
+        primary: "#5296d8",
+        secondary: "#ffffff",
+        tertiary: "#5296d899",
+        textPrimary: "#ffffff",
+        textSecondary: "#5296d8",
+        textTertiary: "#00000099",
+        disableThemeScrollbar: false,
+      }}
+      documents={[
+        {
+          uri: previewFile ? window.URL.createObjectURL(previewFile) : "",
+          fileName: "Template Preview",
+        },
+      ]}
+      pluginRenderers={DocViewerRenderers}
+    />
   );
 };
