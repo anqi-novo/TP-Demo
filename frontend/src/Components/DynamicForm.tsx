@@ -6,6 +6,7 @@ import ErrorToast from './ErrorToast';
 type Props = {
   fields: string[];
   file: File;
+  onCancel: () => void;
 };
 
 function getFieldComponent(field: string, formState: { [key: string]: any }, handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void) {
@@ -53,7 +54,7 @@ function getFieldComponent(field: string, formState: { [key: string]: any }, han
   }
 }
 
-const DynamicForm = ({ fields, file }: Props) => {
+const DynamicForm = ({ fields, file, onCancel }: Props) => {
   const [formState, setFormState] = useState<{ [key: string]: string }>({});
   const [error, setError] = useState<string | null>(null); // Add error state
   const [open, setOpen] = useState(false);
@@ -154,11 +155,19 @@ const DynamicForm = ({ fields, file }: Props) => {
 
         ))}
       </Grid>
-      <Grid item xs={12}>
-        <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
-          Generate
-        </Button>
+      <Grid container item xs={12} spacing={1} justifyContent={"flex-end"}>
+        <Grid item>
+          <Button type="button" onClick={onCancel} variant="contained" sx={{ mt: 3, mb: 2 }}>
+            Cancel
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
+            Generate
+          </Button>
+        </Grid>
       </Grid>
+
     </Box>
   );
 };

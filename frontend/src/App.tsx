@@ -15,6 +15,10 @@ function App() {
     setFile(file)
   }
 
+  const handleCancelForm = () => {
+    setTemplateVariables([]);
+    setFile(undefined);
+  }
 
   return (
     <div>
@@ -23,7 +27,7 @@ function App() {
         {file ? <Grid container spacing={2} alignItems="stretch" justifyContent="center">
           <Grid item xs={12} md={6}>
             <Box mb={{ xs: 2, md: 0 }} alignItems="center">
-              {file && templateVariables && templateVariables.length > 0 && <DynamicForm fields={templateVariables} file={file} />}
+              {file && templateVariables && templateVariables.length > 0 && <DynamicForm fields={templateVariables} file={file} onCancel={handleCancelForm} />}
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
