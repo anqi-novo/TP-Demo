@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { TextField, Button, Grid, Box, Typography, Select, MenuItem, SelectChangeEvent, InputLabel, FormControl } from '@mui/material';
 import axios from 'axios';
+import ErrorToast from './ErrorToast';
 
 type Props = {
   fields: string[];
@@ -54,6 +55,8 @@ function getFieldComponent(field: string, formState: { [key: string]: any }, han
 
 const DynamicForm = ({ fields, file }: Props) => {
   const [formState, setFormState] = useState<{ [key: string]: string }>({});
+  const [error, setError] = useState<string | null>(null); // Add error state
+  const [open, setOpen] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -78,8 +81,7 @@ const DynamicForm = ({ fields, file }: Props) => {
     Object.entries(formState).forEach(([key, value]) => {
       formData.append(key, value);
     });
-
-
+    console.log("try")
     try {
       const response = await axios.post('/generate_template', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -93,16 +95,27 @@ const DynamicForm = ({ fields, file }: Props) => {
       link.setAttribute('download', `generated_template_${new Date().toDateString()}.docx`);
       document.body.appendChild(link);
       link.click();
-
       // Handle the response data here
     } catch (error) {
       console.error('Error:', error);
-      // Handle the error here
+      setOpen(true)
+      setError('Error generating template. Please try again.'); // Set error state
     }
   };
 
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ m: 3 }}>
+      {error && (
+        <ErrorToast open={open} handleClose={handleClose} error={error} />
+      )}
       <Grid container spacing={2} justifyContent="center" alignItems="center">
         <Grid item xs={12}>
           <Typography component="h1" variant="overline">

@@ -1,17 +1,15 @@
-import { Box, Snackbar } from "@mui/material";
+import { Box } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
-import { Alert } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import '../App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import ErrorToast from "./ErrorToast";
 
 function FileUpload(props: { onTemplateVariables: Function }) {
 
   const { onTemplateVariables } = props;
-
-
-  const [message, setMessage] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -32,7 +30,7 @@ function FileUpload(props: { onTemplateVariables: Function }) {
       }
 
     } else {
-      setMessage('Please upload a valid DOCX file.');
+      setError('Please upload a valid DOCX file.');
       setOpen(true);
     }
     setLoading(false);
@@ -59,11 +57,7 @@ function FileUpload(props: { onTemplateVariables: Function }) {
           Upload template (DOCX)
         </LoadingButton>
       </label>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          {message}
-        </Alert>
-      </Snackbar>
+      {error && <ErrorToast open={open} error={error} handleClose={handleClose} />}
     </Box>
   );
 }
