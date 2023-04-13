@@ -9,7 +9,6 @@ export const Preview = () => {
     const fetchPreview = async () => {
       try {
         const response = await axios.get("/get_preview", { responseType: 'blob' });
-        console.log(response.data)
         const blob = new Blob([response.data], { type: "application/pdf;" });
         const file = new File([blob], "temp_file.pdf", { type: "application/pdf" });
         console.log(file.stream)

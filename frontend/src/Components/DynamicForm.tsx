@@ -7,6 +7,51 @@ type Props = {
   file: File;
 };
 
+function getFieldComponent(field: string, formState: { [key: string]: any }, handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void) {
+  const fieldType = formState[`${field}-type`];
+  if (fieldType === "Date") {
+    return (
+      <TextField
+        size="small"
+        fullWidth
+        type="date"
+        required
+        name={field}
+        value={formState[field] || ''}
+        onChange={handleInputChange}
+        autoFocus
+      />
+    );
+  } else if (fieldType === "Number") {
+    return (
+      <TextField
+        size="small"
+        fullWidth
+        required
+        type="number"
+        label={field}
+        name={field}
+        value={formState[field] || ''}
+        onChange={handleInputChange}
+        autoFocus
+      />
+    );
+  } else {
+    return (
+      <TextField
+        size="small"
+        fullWidth
+        required
+        label={field}
+        name={field}
+        value={formState[field] || ''}
+        onChange={handleInputChange}
+        autoFocus
+      />
+    );
+  }
+}
+
 const DynamicForm = ({ fields, file }: Props) => {
   const [formState, setFormState] = useState<{ [key: string]: string }>({});
 
@@ -28,18 +73,12 @@ const DynamicForm = ({ fields, file }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const form = e.target as HTMLFormElement;
-    // console.log(form)
-    // if (!form.checkValidity()) {
-    //   console.log("hello")
-    //   // form is invalid, do not submit
-    //   return;
-    // }
     const formData = new FormData();
     formData.append('file', file);
     Object.entries(formState).forEach(([key, value]) => {
       formData.append(key, value);
     });
+
 
     try {
       const response = await axios.post('/generate_template', formData, {
@@ -96,16 +135,7 @@ const DynamicForm = ({ fields, file }: Props) => {
 
             </Grid>
             <Grid item xs={6} sm={5}>
-              <TextField
-                size="small"
-                fullWidth
-                required
-                label={field}
-                name={field}
-                value={formState[field] || ''}
-                onChange={handleInputChange}
-                autoFocus
-              />
+              {getFieldComponent(field, formState, handleInputChange)}
             </Grid>
           </Grid>
 

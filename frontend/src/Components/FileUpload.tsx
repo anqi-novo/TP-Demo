@@ -19,7 +19,6 @@ function FileUpload(props: { onTemplateVariables: Function }) {
     setLoading(true)
     const file = event.target.files?.[0];
     if (file?.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-      console.log(file);
 
       // Send the file to the backend for processing
       const formData = new FormData();
@@ -28,7 +27,6 @@ function FileUpload(props: { onTemplateVariables: Function }) {
         const response = await axios.post('/process_document', formData);
         const data = response.data;
         onTemplateVariables(data.variables, file);
-        console.log(data, file);
       } catch (error) {
         console.error(error);
       }

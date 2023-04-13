@@ -3,6 +3,7 @@ from docxtpl import DocxTemplate
 import os
 from docx2pdf import convert
 import pythoncom
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -55,7 +56,6 @@ def process_document():
 @app.route("/generate_template", methods=["POST"])
 def generate_template():
     form_data = request.form.to_dict()
-    print(form_data)
     file = request.files["file"]
 
     # Save the file to disk temporarily
@@ -68,9 +68,14 @@ def generate_template():
     doc = DocxTemplate("temp_file.docx")
 
     context = {}
-    for field in form_data:
+    for field, value in form_data.items():
         if field != "file":
-            context[field] = form_data[field]
+            field_type = form_data.get(f"{field}-type")
+            if field_type == "Number":
+                value = int(value)
+            elif field_type == "Date":
+                value = datetime.strptime(value, "%Y-%m-%d").date()
+            context[field] = value
 
     doc.render(context)
     doc.save("generated_template.docx")
@@ -90,7 +95,6 @@ def generate_template():
 
 @app.route("/get_preview")
 def get_preview():
-    print("get_preview")
     try:
         # Open the PDF file in binary mode and return it to the frontend
         return send_file(
@@ -103,4 +107,4 @@ def get_preview():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
