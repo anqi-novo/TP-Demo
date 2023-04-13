@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Paper } from '@mui/material';
+import { Box, Container, Grid } from '@mui/material';
 import './App.css';
 import FileUpload from './Components/FileUpload';
 import NavBar from './Components/Navbar';

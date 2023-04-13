@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import axios from "axios";
-import { Box } from "@mui/material";
 
 export const Preview = () => {
   const [previewFile, setPreviewFile] = useState<File | undefined>();
